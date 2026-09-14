@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Takiyou - Web Developer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --glow-color: hsl(257, 100%, 70%); /* A nice purple for the glow */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #0d1117; /* A dark, GitHub-like background */
+        color: #c9d1d9; /* Lighter text for contrast */
+        overflow-x: hidden;
+      }
+
+      /* Ensure main content is above the background canvas */
+      main,
+      footer,
+      header {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Mouse Aura Effect */
+      #aura {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: radial-gradient(
+          circle at var(--x) var(--y),
+          rgba(45, 52, 255, 0.15),
+          transparent 30%
+        );
+        pointer-events: none;
+        z-index: 100;
+        transition: background 0.2s ease-out;
+      }
+
+      #bg-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Keep canvas in the background */
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0d1117;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #384256;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #4b556a;
+      }
+
+      .typed-cursor {
+        color: #8b5cf6;
+        animation: typedjsBlink 0.7s infinite;
+      }
+      @keyframes typedjsBlink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* Glassmorphism Card Style with Gradient Border */
+      .glass-card {
+        background: rgba(
+          22,
+          27,
+          34,
+          0.6
+        ); /* Semi-transparent dark background */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid #30363d; /* Subtle border */
+        border-radius: 1rem;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      /* Hover Glow Effect for Cards */
+      .glass-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 1rem;
+        border: 2px solid transparent;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6) border-box;
+        -webkit-mask: linear-gradient(#fff 0 0) padding-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: destination-out;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .glass-card:hover::before {
+        opacity: 1;
+      }
+
+      /* Gradient Button */
+      .gradient-btn {
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        transition: all 0.3s ease;
+      }
+      .gradient-btn:hover {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        transform: translateY(-2px);
+      }
+
+      /* NEW: Social Icon Styling */
+      .social-icon {
+        transition: transform 0.3s ease, color 0.3s ease;
+      }
+      .social-icon:hover {
+        transform: scale(1.1);
+        color: #8b5cf6;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- Mouse Aura -->
+    <div id="aura"></div>
+
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header -->
+    <header
+      id="header"
+      class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+    >
+      <div
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <a href="#hero" class="text-2xl font-bold text-white tracking-wider"
+          >Takiyou</a
+        >
+        <nav class="hidden md:flex space-x-8 text-slate-300">
+          <a
+            href="#about"
+            class="hover:text-white transition-colors duration-300"
+            >About</a
+          >
+          <a
+            href="#projects"
+            class="hover:text-white transition-colors duration-300"
+            >Projects</a
+          >
+          <a
+            href="#skills"
+            class="hover:text-white transition-colors duration-300"
+            >Skills</a
+          >
+          <a
+            href="#contact"
+            class="hover:text-white transition-colors duration-300"
+            >Contact</a
+          >
+        </nav>
+        <a
+          href="resume.pdf"
+          download="Takiyou_Resume.pdf"
+          class="hidden md:block gradient-btn text-white font-semibold px-5 py-2 rounded-lg"
+          >Download CV</a
+        >
+        <button id="mobile-menu-button" class="md:hidden text-white text-2xl">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-slate-900/90 backdrop-blur-sm"
+      >
+        <a
+          href="#about"
+          class="block text-center py-3 text-slate-300 hover:bg-blue-500 hover:text-white"
+          >About</a
+        >
+        <a
+          href="#projects"
+          class="block text-center py-3 text-slate-300 hover:bg-blue-500 hover:text-white"
+          >Projects</a
+        >
+        <a
+          href="#skills"
+          class="block text-center py-3 text-slate-300 hover:bg-blue-500 hover:text-white"
+          >Skills</a
+        >
+        <a
+          href="#contact"
+          class="block text-center py-3 text-slate-300 hover:bg-blue-500 hover:text-white"
+          >Contact</a
+        >
+      </div>
+    </header>
+
+    <main class="container mx-auto px-6">
+      <!-- Hero Section -->
+      <section id="hero" class="min-h-screen flex items-center justify-center">
+        <div class="w-full text-center">
+          <div class="z-10 max-w-3xl mx-auto">
+            <h1
+              class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4"
+            >
+              I'm Takiyou, a
+              <span
+                id="typed-text"
+                class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+              ></span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 mb-8 max-w-lg mx-auto">
+              I craft fast, scalable, and beautiful web applications. From Big
+              Data to elegant front-ends, I bring ideas to life with code.
+            </p>
+            <div class="flex space-x-4 justify-center">
+              <a
+                href="#projects"
+                class="gradient-btn text-white font-semibold px-8 py-3 rounded-lg text-sm sm:text-base"
+                >View My Work</a
+              >
+              <a
+                href="#contact"
+                class="bg-slate-700 text-sm sm:text-base text-white font-semibold px-8 py-3 rounded-lg hover:bg-slate-600 transition-colors"
+                >Contact</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About & Education Section -->
+      <section id="about" class="py-20 md:py-32">
+        <div class="grid md:grid-cols-5 gap-8">
+          <div class="md:col-span-3">
+            <div class="glass-card h-full">
+              <h2 class="text-3xl font-bold text-white mb-6">About Me</h2>
+              <p class="text-slate-300 leading-relaxed mb-4">
+                I am a Big Data Analytics Engineer and Web Developer with a
+                passion for creating beautiful, functional, and highly
+                interactive web experiences. I am open to full-time, part-time,
+                or freelance opportunities where I can apply my skills,
+                contribute to impactful projects, and continue growing in a
+                dynamic environment.
+              </p>
+              <p class="text-slate-300 leading-relaxed">
+                My expertise spans from backend development with Laravel and
+                Python to crafting visually engaging and user-friendly
+                interfaces using modern front-end technologies. I thrive on
+                transforming ideas into solutions that deliver both performance
+                and aesthetic appeal.
+              </p>
+            </div>
+          </div>
+          <div class="md:col-span-2 space-y-8">
+            <div class="glass-card">
+              <h3 class="text-xl font-bold text-white mb-2">
+                MASTER in Big Data Analytics
+              </h3>
+              <p class="text-slate-400">
+                USTHB, Bab Ezzouar - Algeria (2023-2025)
+              </p>
+            </div>
+            <div class="glass-card">
+              <h3 class="text-xl font-bold text-white mb-2">
+                Bachelor of Operation Research
+              </h3>
+              <p class="text-slate-400">
+                USTHB, Bab Ezzouar - Algeria (2020-2023)
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured Projects Section -->
+      <section id="projects" class="py-20 md:py-32">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+            Featured Projects
+          </h2>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="project-card glass-card p-0 overflow-hidden">
+            <img
+              src="e-commerce.png"
+              class="w-full h-56 object-cover"
+              alt="Project One Placeholder"
+            />
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-white mb-2">
+                E-commerce Platform
+              </h3>
+              <p class="text-slate-400">Laravel, Livewire, and Flask</p>
+            </div>
+          </div>
+          <div class="project-card glass-card p-0 overflow-hidden">
+            <img
+              src="Academy.png"
+              class="w-full h-56 object-cover"
+              alt="Project Two Placeholder"
+            />
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-white mb-2">Online Academy</h3>
+              <p class="text-slate-400">Laravel, Livewire, and Filament</p>
+            </div>
+          </div>
+          <div class="project-card glass-card p-0 overflow-hidden">
+            <img
+              src="orsc.png"
+              class="w-full h-56 object-cover"
+              alt="Project Three Placeholder"
+            />
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-white mb-2">
+                USTHB Science Club (ORSC)
+              </h3>
+              <p class="text-slate-400">Build with Laravel</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills Section -->
+      <section id="skills" class="py-20 md:py-32">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+            Technical Skills
+          </h2>
+        </div>
+        <div class="glass-card p-4 md:p-8">
+          <div
+            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+          >
+            <div class="text-center p-4 bg-slate-800 rounded-lg">HTML</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">CSS</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">
+              Tailwind CSS
+            </div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">
+              JavaScript
+            </div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">Vue js</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">PHP</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">SQL</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">MySQL</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">Laravel</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">Redis</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">Python</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">Flask</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">Streamlit</div>
+            <div class="text-center p-4 bg-slate-800 rounded-lg">
+              Git & GitHub
+            </div>
+            <div
+              class="text-center p-4 bg-slate-800 rounded-lg col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-1"
+            >
+              Microsoft Office
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact" class="py-20 md:py-32">
+        <div class="glass-card max-w-4xl mx-auto text-center">
+          <h2 class="text-3xl font-bold text-white mb-4">Get In Touch</h2>
+          <p class="text-slate-400 mb-8 max-w-2xl mx-auto">
+            I'm open to new projects and collaborations. Feel free to reach out
+            and let's build something amazing together.
+          </p>
+          <div class="flex justify-center items-center space-x-6 sm:space-x-8">
+            <a
+              href="https://github.com/takiyou14"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-400 hover:text-white social-icon z-10"
+            >
+              <i class="fab fa-github fa-2x"></i>
+            </a>
+            <a
+              href="https://linkedin.com/in/abdelkader-berkani-a6b817243"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-400 hover:text-white social-icon z-10"
+            >
+              <i class="fab fa-linkedin fa-2x"></i>
+            </a>
+            <a
+              href="https://wa.me/213669021172"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-400 hover:text-white social-icon z-10"
+            >
+              <i class="fab fa-whatsapp fa-2x"></i>
+            </a>
+            <a
+              href="https://www.instagram.com/x_takiyou"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-slate-400 hover:text-white social-icon z-10"
+            >
+              <i class="fab fa-instagram fa-2x"></i>
+            </a>
+            <a
+              href="mailto:aekberkani0@gmail.com"
+              target="_blank"
+              class="text-slate-400 hover:text-white social-icon z-10"
+            >
+              <i class="fas fa-envelope fa-2x"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="text-center py-8 text-slate-400">
+      <p>&copy; 2025 Abdelkader Takiyou Berkani</p>
+    </footer>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Mouse Aura Effect ---
+        const aura = document.getElementById("aura");
+        document.addEventListener("mousemove", (e) => {
+          requestAnimationFrame(() => {
+            aura.style.setProperty("--x", e.clientX + "px");
+            aura.style.setProperty("--y", e.clientY + "px");
+          });
+        });
+
+        // --- Header on Scroll ---
+        const header = document.getElementById("header");
+        window.addEventListener("scroll", () => {
+          header.classList.toggle("bg-slate-900/80", window.scrollY > 50);
+          header.classList.toggle("backdrop-blur-sm", window.scrollY > 50);
+        });
+
+        // --- Mobile Menu ---
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+        mobileMenuButton.addEventListener("click", () =>
+          mobileMenu.classList.toggle("hidden")
+        );
+        mobileMenu.addEventListener("click", (e) => {
+          if (e.target.tagName === "A") mobileMenu.classList.add("hidden");
+        });
+
+        // --- Typed.js ---
+        new Typed("#typed-text", {
+          strings: ["Laravel Dev.", "Data Engineer.", "Web Developer."],
+          typeSpeed: 70,
+          backSpeed: 40,
+          backDelay: 2000,
+          loop: true,
+        });
+
+        // --- Three.js Particle Background ---
+        let scene, camera, renderer, particles;
+
+        function initThreeJS() {
+          scene = new THREE.Scene();
+          camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          );
+          camera.position.z = 5;
+
+          renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById("bg-canvas"),
+            alpha: true,
+          });
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+          // Create particles
+          const particlesGeometry = new THREE.BufferGeometry();
+          const particlesCount = 5000;
+          const posArray = new Float32Array(particlesCount * 3);
+
+          for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
+          }
+
+          particlesGeometry.setAttribute(
+            "position",
+            new THREE.BufferAttribute(posArray, 3)
+          );
+
+          const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.025,
+            color: 0x8b5cf6,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+          });
+
+          particles = new THREE.Points(particlesGeometry, particlesMaterial);
+          scene.add(particles);
+
+          window.addEventListener("resize", onWindowResize, false);
+        }
+
+        function onWindowResize() {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animateThreeJS() {
+          requestAnimationFrame(animateThreeJS);
+
+          // Animate particles
+          particles.rotation.y += 0.0001;
+          particles.rotation.x += 0.0002;
+
+          renderer.render(scene, camera);
+        }
+
+        initThreeJS();
+        animateThreeJS();
+
+        // --- GSAP Scroll Animations ---
+        gsap.registerPlugin(ScrollTrigger);
+        const cards = gsap.utils.toArray(".glass-card, .project-card");
+        cards.forEach((card) => {
+          gsap.from(card, {
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+            autoAlpha: 0,
+            y: 50,
+            scale: 0.95,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

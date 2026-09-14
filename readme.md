@@ -4,7 +4,7 @@ This is my **personal portfolio website** — a fully responsive, single-page ap
 It showcases my skills, experience, projects, and contact information in a visually engaging way with **smooth animations**, **3D interactive backgrounds**, and **modern UI/UX** principles.
 
 ## 🚀 Live Demo
-[Visit Portfolio](https://takiyou14.github.io/PORTFOLIO/)
+[Visit Portfolio](https://takiyou14.github.io)
 
 ---
 
